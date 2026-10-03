@@ -179,6 +179,22 @@ void Cmd_SoFBuddy_ListFeatures_f(void) {
     #endif
     total_features++;
 
+    #if FEATURE_CHAT_TRANSLATE
+    PrintOut(PRINT_DEV, P_GREEN "[ON] " P_WHITE "chat_translate\n");
+    feature_count++;
+    #else
+    PrintOut(PRINT_DEV, P_RED "[OFF] " P_WHITE "chat_translate\n");
+    #endif
+    total_features++;
+
+    #if FEATURE_URL_RADIO
+    PrintOut(PRINT_DEV, P_GREEN "[ON] " P_WHITE "url_radio\n");
+    feature_count++;
+    #else
+    PrintOut(PRINT_DEV, P_RED "[OFF] " P_WHITE "url_radio\n");
+    #endif
+    total_features++;
+
     #if FEATURE_INTERNAL_MENUS
     PrintOut(PRINT_DEV, P_GREEN "[ON] " P_WHITE "internal_menus\n");
     feature_count++;

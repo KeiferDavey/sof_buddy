@@ -31,3 +31,8 @@ src/features/internal_menus/menu_data.cpp
 # Python bytecode
 __pycache__/
 *.py[cod]
+
+# Private local translator credentials
+/sof_buddy/deepl.key
+/deepl.key
+*.key

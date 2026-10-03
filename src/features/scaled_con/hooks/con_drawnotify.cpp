@@ -8,7 +8,14 @@
 #include "../../scaled_ui_base/shared.h"
 #include "../../scaled_ui_base/ref_gl_state.h"
 
+#if FEATURE_CHAT_TRANSLATE
+extern void chat_translate_pump();
+#endif
+
 void hkCon_DrawNotify(detour_Con_DrawNotify::tCon_DrawNotify original) {
+#if FEATURE_CHAT_TRANSLATE
+    chat_translate_pump();
+#endif
 	SOFBUDDY_ASSERT(viddef_width != nullptr);
 	SOFBUDDY_ASSERT(fontScale > 0.0f);
 	SOFBUDDY_ASSERT(current_vid_w > 0);

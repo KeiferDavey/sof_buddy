@@ -29,6 +29,8 @@ CATEGORIES = {
     ],
     "Network Features": [
         "http_maps",
+        "url_radio",
+        "chat_translate",
     ],
     "Menu Features": [
         "internal_menus",

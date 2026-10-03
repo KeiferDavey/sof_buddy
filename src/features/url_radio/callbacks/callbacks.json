@@ -1,0 +1,1 @@
+[{"hook":"PostCvarInit","callback":"url_radio_PostCvarInit","priority":65,"phase":"Post"}]

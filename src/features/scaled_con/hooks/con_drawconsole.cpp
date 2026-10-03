@@ -11,7 +11,14 @@ extern void (*orig_SRC_AddDirtyPoint)(int x, int y);
 
 // #pragma GCC push_options
 // #pragma GCC optimize ("O0")
+#if FEATURE_CHAT_TRANSLATE
+extern void chat_translate_pump();
+#endif
+
 void hkCon_DrawConsole(float frac, detour_Con_DrawConsole::tCon_DrawConsole original) {
+#if FEATURE_CHAT_TRANSLATE
+    chat_translate_pump();
+#endif
 	SOFBUDDY_ASSERT(cls_state != nullptr);
 	SOFBUDDY_ASSERT(viddef_width != nullptr);
 	SOFBUDDY_ASSERT(fontScale > 0.0f);

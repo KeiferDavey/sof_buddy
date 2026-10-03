@@ -1,0 +1,8 @@
+Upstream base: d3nd3/sof_buddy, https://github.com/d3nd3/sof_buddy
+Retain the repository MIT LICENSE in source and binary distributions.
+
+Radio playback backend: VideoLAN libVLC 3.x (external runtime dependency).
+https://www.videolan.org/vlc/
+No VLC runtime files or copied VLC implementation source are included here.
+Users obtain the official 32-bit runtime separately and retain its notices.
+The feature dynamically loads the runtime's public API.

@@ -1,0 +1,4 @@
+[
+ {"function":"Qcommon_Frame","callback":"chat_translate_frame_post_callback","priority":115,"phase":"Post"},
+ {"function":"CL_Shutdown","callback":"chat_translate_shutdown_pre_callback","priority":85,"phase":"Pre"}
+]

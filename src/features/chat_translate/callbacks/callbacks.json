@@ -1,0 +1,1 @@
+[{"hook":"PostCvarInit","callback":"chat_translate_PostCvarInit","priority":70,"phase":"Post"}]

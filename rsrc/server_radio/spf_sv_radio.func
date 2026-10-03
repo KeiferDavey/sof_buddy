@@ -1,0 +1,89 @@
+// Server addon for the URL-radio SoF Buddy fork. No leading hyphen.
+// Only sends data via reserved client cvar 90; never executes client commands.
+// Server-console/RCON controls: sb_radio_play URL, sb_radio_stop, sb_radio_url URL.
+function spf_sv_radio_init()
+{
+  sp_sc_exec_file sofplus/addons/spf_sv_radio.cfg
+  sp_sc_flow_if text cvar _spf_sv_radio_sequence == val ""
+  {
+    set _spf_sv_radio_sequence 0
+  }
+  set _spf_sv_radio_playing 0
+  sp_sc_func_alias sb_radio_play spf_sv_radio_play
+  sp_sc_func_alias sb_radio_stop spf_sv_radio_stop
+  sp_sc_func_alias sb_radio_url spf_sv_radio_url
+  sp_sc_func_exec spf_sc_list_add_func _sp_sv_on_map_begin "spf_sv_radio_map_begin"
+  sp_sc_func_exec spf_sc_list_add_func _sp_sv_on_map_end "spf_sv_radio_map_end"
+  sp_sc_func_exec spf_sc_list_add_func _sp_sv_on_client_begin "spf_sv_radio_client_begin"
+  echo "URL radio server controls loaded (client cvar 90)."
+}
+
+function spf_sv_radio_url( ~url )
+{
+  set _spf_sv_radio_url #~url
+}
+
+function spf_sv_radio_send_all()
+{
+  set ~slot 0
+  sp_sc_flow_while number cvar ~slot < val #maxclients
+  {
+    zero _sp_sv_info_client_ip
+    sp_sv_info_client #~slot
+    sp_sc_flow_if text cvar _sp_sv_info_client_ip != val ""
+    {
+      sp_sv_client_cvar_set #~slot 90 #_spf_sv_radio_request
+    }
+    add ~slot 1
+  }
+}
+
+function spf_sv_radio_play( ~url )
+{
+  sp_sc_flow_if text cvar ~url != val ""
+  {
+    set _spf_sv_radio_url #~url
+  }
+  sp_sc_flow_if text cvar _spf_sv_radio_url != val ""
+  {
+    add _spf_sv_radio_sequence 1
+    sp_sc_cvar_sset _spf_sv_radio_request "SB_RADIO_V1|" #_spf_sv_radio_sequence "|play|" #_spf_sv_radio_url
+    set _spf_sv_radio_playing 1
+    sp_sc_func_exec spf_sv_radio_send_all
+    echo "URL radio play request sent. Clients must enable server radio."
+  }
+}
+
+function spf_sv_radio_stop()
+{
+  add _spf_sv_radio_sequence 1
+  sp_sc_cvar_sset _spf_sv_radio_request "SB_RADIO_V1|" #_spf_sv_radio_sequence "|stop"
+  set _spf_sv_radio_playing 0
+  sp_sc_func_exec spf_sv_radio_send_all
+}
+
+function spf_sv_radio_client_begin( ~slot )
+{
+  // Clear stale requests or send the current stream to a new client.
+  sp_sc_flow_if number cvar _spf_sv_radio_playing == val 1
+  {
+    sp_sv_client_cvar_set #~slot 90 #_spf_sv_radio_request
+  }
+  sp_sc_flow_if number cvar _spf_sv_radio_playing == val 0
+  {
+    sp_sv_client_cvar_set #~slot 90 ""
+  }
+}
+
+function spf_sv_radio_map_begin()
+{
+  sp_sc_func_exec spf_sv_radio_stop
+}
+
+function spf_sv_radio_map_end()
+{
+  sp_sc_flow_if number cvar _spf_sv_radio_play_at_end == val 1
+  {
+    sp_sc_func_exec spf_sv_radio_play
+  }
+}

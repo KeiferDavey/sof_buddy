@@ -21,6 +21,13 @@
 
 ---
 
+## URL radio fork
+
+This branch adds experimental true HTTP(S) audio streaming with a 32-bit VLC
+3.x runtime and a separate SoFplus server addon. See
+[src/features/url_radio/README.md](src/features/url_radio/README.md) for setup,
+commands, fork/build instructions, and live-test limitations.
+
 ## ✨ Features
 
 <details open>
@@ -331,3 +338,9 @@ This project is licensed under the MIT License. See [LICENSE](LICENSE) for detai
 
 > *SoF Buddy is not affiliated with Raven Software or Activision. Soldier of Fortune is © their respective owners.* 
 
+
+## Experimental automatic chat translation
+
+The `chat_translate` feature translates recognized incoming chat to English via
+DeepL API Free on a background worker. It is disabled by default and needs a
+private local API key. See [setup and limitations](src/features/chat_translate/README.md).

@@ -1,0 +1,58 @@
+name: Radio and translation build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [feature/radio-translate]
+  pull_request:
+    paths:
+      - 'src/features/chat_translate/**'
+      - 'src/features/url_radio/**'
+      - 'tests/**'
+      - 'src/features/scaled_con/hooks/**'
+      - '.github/workflows/radio-translate.yaml'
+
+permissions:
+  contents: read
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        variant: [both, radio-only, translate-only, neither]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential g++-mingw-w64-i686 mingw-w64-i686-dev python3 python3-yaml
+      - name: Test radio and translation
+        run: |
+          bash tests/chat_translate/run.sh
+          bash tests/url_radio/run.sh
+      - name: Select feature combination
+        env:
+          VARIANT: ${{ matrix.variant }}
+        run: |
+          sed -i -E 's/^# (url_radio|chat_translate)$/\1/' features/FEATURES.txt
+          if [ "$VARIANT" = "radio-only" ] || [ "$VARIANT" = "neither" ]; then
+            sed -i 's/^chat_translate$/# chat_translate/' features/FEATURES.txt
+          fi
+          if [ "$VARIANT" = "translate-only" ] || [ "$VARIANT" = "neither" ]; then
+            sed -i 's/^url_radio$/# url_radio/' features/FEATURES.txt
+          fi
+      - name: Build Windows 32-bit DLL
+        run: make -j2 JOBS=2
+      - name: Assemble artifact
+        run: |
+          mkdir -p combined-artifact
+          cp bin/sof_buddy.dll LICENSE THIRD_PARTY_*.txt combined-artifact/
+          cp -r rsrc/server_radio combined-artifact/
+          cp src/features/chat_translate/README.md combined-artifact/CHAT_TRANSLATE.md
+          cp src/features/url_radio/README.md combined-artifact/URL_RADIO.md
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sof-buddy-radio-translate-${{ matrix.variant }}
+          path: combined-artifact/
+          if-no-files-found: error
